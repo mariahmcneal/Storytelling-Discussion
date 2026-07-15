@@ -308,8 +308,7 @@ st.markdown("---")
 st.markdown("""
 <div class="callout" style="border-left-color: #9B72CF; font-size: 0.85rem;">
   <b>About this project</b><br>
-  This data story was created in collaboration with <b>Claude (Anthropic)</b> as part of a data
-  visualization assignment exploring Burtin's antibiotic dataset.<br><br>
+  This data story was created in collaboration with <b>Claude (Anthropic)</b><br><br>
   <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data, reproduced via
   <a href="https://cdn.jsdelivr.net/npm/vega-datasets@1/data/burtin.json" target="_blank">Vega Datasets</a>.<br>
   <b>Tools:</b> Python · Streamlit · Altair · Pandas · NumPy<br>\
