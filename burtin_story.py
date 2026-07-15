@@ -98,56 +98,74 @@ The data reveals a striking pattern: **cell-wall type is almost a perfect predic
 st.markdown("---")
 
 # ═══════════════════════════════════════════════════════════════
-# SECTION 1 — Heatmap
+# SECTION 1 — Bubble matrix
 # ═══════════════════════════════════════════════════════════════
 st.subheader("Part 1 — The Full Picture")
 st.markdown("""
-The heatmap below shows every bacteria–antibiotic combination. Each cell is colored by the
-**Minimum Inhibitory Concentration (MIC)** — the dose needed to stop bacterial growth.
-**Lower MIC (blue) = the antibiotic works at a small dose = effective.**
-**Higher MIC (red) = the antibiotic barely works even at high doses = resistant.**
+The chart below shows every bacteria–antibiotic combination as a **bubble**.
+- **Color** shows Gram staining: blue = Gram-positive, red = Gram-negative
+- **Size** shows MIC — a **smaller bubble means the antibiotic is more effective** (less drug needed)
+- **Shape** separates the two Gram types for extra clarity
+
+Hover over any bubble to see the exact MIC value.
 """)
 
 df_sorted = df.sort_values(["Gram_Staining", "Penicillin"], ascending=[False, True])
 bacteria_order = df_sorted["Short"].tolist()
 
-heatmap = alt.Chart(df_long).mark_rect(stroke="white", strokeWidth=1).encode(
+# Clip log_MIC for size encoding so outliers don't swamp the chart
+df_long["log_MIC_clipped"] = df_long["log_MIC"].clip(-3, 3)
+# Size: invert so small MIC = big bubble ... wait, we want SMALL bubble = resistant
+# Actually: larger bubble = HIGHER MIC = more resistant (bad) — clearer visually
+df_long["size_val"] = (df_long["log_MIC_clipped"] + 3)  # shift to 0–6 range
+
+bubble = alt.Chart(df_long).mark_point(filled=True, opacity=0.82).encode(
     x=alt.X("Antibiotic:N",
             sort=["Penicillin", "Streptomycin", "Neomycin"],
-            axis=alt.Axis(orient="top", labelAngle=0, labelFontSize=12, title=None)),
+            axis=alt.Axis(orient="top", labelAngle=0, labelFontSize=13,
+                          title=None, labelFontWeight="bold")),
     y=alt.Y("Short:N", sort=bacteria_order,
             axis=alt.Axis(labelFontSize=11, title=None)),
-    color=alt.Color("log_MIC:Q",
-                    scale=alt.Scale(scheme="redyellowblue", reverse=True, domain=[-3, 3]),
-                    legend=alt.Legend(
-                        title="log₁₀(MIC) — blue = effective, red = resistant",
-                        orient="bottom", gradientLength=220,
-                        titleFontSize=10, labelFontSize=9
-                    )),
+    color=alt.Color("Gram_Staining:N",
+                    scale=alt.Scale(domain=["positive", "negative"],
+                                    range=[POS_COLOR, NEG_COLOR]),
+                    legend=alt.Legend(title="Gram staining", orient="bottom",
+                                      titleFontSize=10, labelFontSize=10)),
+    shape=alt.Shape("Gram_Staining:N",
+                    scale=alt.Scale(domain=["positive", "negative"],
+                                    range=["circle", "square"]),
+                    legend=None),
+    size=alt.Size("size_val:Q",
+                  scale=alt.Scale(range=[20, 900]),
+                  legend=alt.Legend(
+                      title="Bubble size = MIC (bigger = more resistant)",
+                      orient="bottom", titleFontSize=9, labelFontSize=9,
+                      values=[0, 2, 4, 6]
+                  )),
     tooltip=[
         alt.Tooltip("Bacteria:N", title="Species"),
         alt.Tooltip("Gram_Staining:N", title="Gram staining"),
         alt.Tooltip("Antibiotic:N"),
-        alt.Tooltip("MIC:Q", format=".3f", title="MIC (µg/mL)"),
+        alt.Tooltip("MIC:Q", format=".4f", title="MIC (µg/mL)"),
     ]
-).properties(width=500, height=400)
+).properties(width=480, height=420,
+             title=alt.TitleParams(
+                 text="Antibiotic Effectiveness Across 16 Bacteria",
+                 fontSize=14,
+                 subtitle="Smaller bubble = lower MIC = more effective antibiotic",
+                 subtitleFontSize=10, subtitleColor="gray"
+             ))
 
-gram_bar = alt.Chart(df_sorted[["Short","Gram_Staining"]].drop_duplicates()).mark_rect(width=14).encode(
-    y=alt.Y("Short:N", sort=bacteria_order, axis=None),
-    color=alt.Color("Gram_Staining:N",
-                    scale=alt.Scale(domain=["positive","negative"], range=[POS_COLOR, NEG_COLOR]),
-                    legend=alt.Legend(title="Gram staining", orient="bottom",
-                                      titleFontSize=10, labelFontSize=10))
-).properties(width=16, height=400)
-
-st.altair_chart(gram_bar | heatmap, use_container_width=False)
+st.altair_chart(bubble, use_container_width=False)
 
 st.markdown(f"""
 <div class="callout">
-  <b>What to notice:</b> The left color strip shows each bacterium's Gram staining —
-  <b style="color:{POS_COLOR}">blue = Gram-positive</b>, <b style="color:{NEG_COLOR}">red = Gram-negative</b>.
-  Look at the Penicillin column: it is almost entirely blue for Gram-positive bacteria,
-  and almost entirely red for Gram-negative bacteria. The pattern is nearly perfect.
+  <b>What to notice:</b> Look at the <b>Penicillin column</b>.
+  <b style="color:{POS_COLOR}">Gram-positive bacteria (blue circles)</b> all have tiny bubbles —
+  Penicillin stops them at very low doses.
+  <b style="color:{NEG_COLOR}">Gram-negative bacteria (red squares)</b> have large bubbles —
+  Penicillin barely touches them even at high doses.
+  Streptomycin and Neomycin show a much more mixed, balanced picture across both groups.
 </div>
 """, unsafe_allow_html=True)
 
@@ -290,11 +308,23 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════
 st.subheader("Key Takeaways")
 st.markdown(f"""
-- 🔵 **Penicillin works almost exclusively on Gram-positive bacteria** — it targets the thick cell wall that Gram-negative bacteria simply don't have in the same way.
-- 🟣 **Neomycin is the broadest antibiotic** of the three, effective across both Gram types.
-- 🟢 **Streptomycin sits in the middle** — more balanced than Penicillin, but not as broad as Neomycin.
-- ⚠️ **No antibiotic is universal.** Every drug has outliers (e.g., *S. viridans* resists Neomycin strongly).
-- 🧫 **Burtin's 1951 finding still guides medicine today:** knowing a bacterium's Gram type is step one in choosing the right treatment.
+- **Penicillin works almost exclusively on Gram-positive bacteria** — it targets the thick cell wall that Gram-negative bacteria simply don't have in the same way.
+- **Neomycin is the broadest antibiotic** of the three, effective across both Gram types.
+- **Streptomycin sits in the middle** — more balanced than Penicillin, but not as broad as Neomycin.
+- **No antibiotic is universal.** Every drug has outliers (e.g., *S. viridans* resists Neomycin strongly).
+- **Burtin's 1951 finding still guides medicine today:** knowing a bacterium's Gram type is step one in choosing the right treatment.
 """)
 
-st.caption("Data: Burtin (1951) via Vega Datasets · MIC = Minimum Inhibitory Concentration (µg/mL) · Lower MIC = more effective")
+st.markdown("---")
+st.markdown("""
+<div class="callout" style="border-left-color: #9B72CF; font-size: 0.85rem;">
+  <b>📝 About this project</b><br>
+  This data story was created in collaboration with <b>Claude (Anthropic)</b> as part of a data
+  visualization assignment exploring Burtin's antibiotic dataset.<br><br>
+  <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data, reproduced via
+  <a href="https://cdn.jsdelivr.net/npm/vega-datasets@1/data/burtin.json" target="_blank">Vega Datasets</a>.<br>
+  <b>Tools:</b> Python · Streamlit · Altair · Pandas · NumPy<br>
+  <b>AI assistance:</b> Visualization design, narrative structure, and code were developed
+  with the help of Claude (claude.ai).
+</div>
+""", unsafe_allow_html=True)
