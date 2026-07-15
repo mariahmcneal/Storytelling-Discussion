@@ -311,6 +311,5 @@ st.markdown("""
   This data story was created in collaboration with <b>Claude (Anthropic)</b><br><br>
   <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data, reproduced via
   <a href="https://cdn.jsdelivr.net/npm/vega-datasets@1/data/burtin.json" target="_blank">Vega Datasets</a>.<br>
-  <b>Tools:</b> Python · Streamlit · Altair · Pandas · NumPy<br>\
 </div>
 """, unsafe_allow_html=True)
