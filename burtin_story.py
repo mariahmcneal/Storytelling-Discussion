@@ -286,7 +286,7 @@ st.markdown(f"""
 <div class="callout">
   <b> Choose Penicillin for Gram-positive infections.</b> Its median MIC is lower than
   the other two antibiotics against Gram-positive bacteria.<br><br>
-  <b> Choose Neomycin or StreptomycinFor Gram-negative infections.</b> Penicillin's median
+  <b> Choose Neomycin or Streptomycin for Gram-negative infections.</b> Penicillin's median
   MIC goes up dramatically, while the other two stay low and stable.<br><br>
 </div>
 """, unsafe_allow_html=True)
@@ -309,7 +309,6 @@ st.markdown("""
 <div class="callout" style="border-left-color: #9B72CF; font-size: 0.85rem;">
   <b>About this project</b><br>
   This data story was created in collaboration with <b>Claude (Anthropic)</b><br><br>
-  <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data, reproduced via
-  <a href='https://cdn.jsdelivr.net/npm/vega-datasets@1/data/burtin.json' target='_blank'>Vega Datasets</a>.<br>
+  <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data<br>
 </div>
 """, unsafe_allow_html=True)
