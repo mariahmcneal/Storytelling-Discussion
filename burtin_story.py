@@ -242,7 +242,7 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════
 # SECTION 3 — Summary bar chart
 # ═══════════════════════════════════════════════════════════════
-st.subheader("Part 3 — The Bottom Line")
+st.subheader("The Bottom Line")
 st.markdown("""
 If you only knew a patient had a Gram-positive or Gram-negative infection, which antibiotic
 would you reach for? The chart below shows the **median MIC** for each antibiotic, split by Gram type.
