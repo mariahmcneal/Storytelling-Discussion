@@ -88,11 +88,7 @@ st.title("🔬 The Antibiotic Divide")
 st.markdown("""
 **Does a bacterium's cell-wall type predict which antibiotic will defeat it?**
 
-In 1951, scientist Will Burtin tested three antibiotics — Penicillin, Streptomycin, and Neomycin —
-against 16 bacterial species. The bacteria were also classified by **Gram staining**: a simple lab test
-that reveals whether a bacterium has a thick outer wall (Gram-positive) or a protective lipid membrane (Gram-negative).
-
-The data reveals a striking pattern: **cell-wall type is almost a perfect predictor of Penicillin's effectiveness.**
+The data reveals a strong pattern: **cell-wall type is a good predictor of Penicillin's effectiveness.**
 """)
 
 st.markdown("---")
@@ -100,11 +96,11 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════
 # SECTION 1 — Bubble matrix
 # ═══════════════════════════════════════════════════════════════
-st.subheader("Part 1 — The Full Picture")
+st.subheader("The Full Picture")
 st.markdown("""
 The chart below shows every bacteria–antibiotic combination as a **bubble**.
 - **Color** shows Gram staining: blue = Gram-positive, red = Gram-negative
-- **Size** shows MIC — a **smaller bubble means the antibiotic is more effective** (less drug needed)
+- **Size** shows MIC. A **smaller bubble means the antibiotic is more effective** (less drug needed)
 - **Shape** separates the two Gram types for extra clarity
 
 Hover over any bubble to see the exact MIC value.
@@ -161,9 +157,9 @@ st.altair_chart(bubble, use_container_width=False)
 st.markdown(f"""
 <div class="callout">
   <b>What to notice:</b> Look at the <b>Penicillin column</b>.
-  <b style="color:{POS_COLOR}">Gram-positive bacteria (blue circles)</b> all have tiny bubbles —
+  <b style="color:{POS_COLOR}">Gram-positive bacteria (blue circles)</b> all have tiny bubbles.
   Penicillin stops them at very low doses.
-  <b style="color:{NEG_COLOR}">Gram-negative bacteria (red squares)</b> have large bubbles —
+  <b style="color:{NEG_COLOR}">Gram-negative bacteria (red squares)</b> have large bubbles.
   Penicillin barely touches them even at high doses.
   Streptomycin and Neomycin show a much more mixed, balanced picture across both groups.
 </div>
@@ -174,10 +170,10 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════
 # SECTION 2 — Dot plot (interactive)
 # ═══════════════════════════════════════════════════════════════
-st.subheader("Part 2 — Compare Antibiotics")
+st.subheader("Compare Antibiotics")
 st.markdown("""
 Select an antibiotic below to see how its effectiveness breaks down by Gram staining.
-The orange line marks **MIC = 1 µg/mL**, a common threshold for clinical effectiveness —
+The orange line marks **MIC = 1 µg/mL**,
 dots below this line indicate the antibiotic works well.
 """)
 
@@ -224,17 +220,14 @@ st.altair_chart(dot_chart, use_container_width=False)
 if antibiotic_choice == "Penicillin":
     st.markdown(f"""
 <div class="callout">
-  <b>Penicillin's split is dramatic.</b> All 7 Gram-positive species fall well below the threshold,
+  <b>Penicillin's split is dramatic.</b> All 7 Gram-positive species fall below the threshold,
   most needing less than 0.05 µg/mL. Three Gram-negative species (A. aerogenes, K. pneumoniae,
-  P. aeruginosa) require over 800 µg/mL — that's <b>up to 870,000× more drug</b> for the same effect.
-  Penicillin works by attacking the thick wall of Gram-positive bacteria; the outer membrane of
-  Gram-negative bacteria blocks it completely.
+  P. aeruginosa) require over 800 µg/mL.
 </div>""", unsafe_allow_html=True)
 elif antibiotic_choice == "Streptomycin":
     st.markdown("""
 <div class="callout">
-  <b>Streptomycin is more balanced.</b> It targets ribosomes — structures found in all bacteria —
-  rather than the cell wall, so Gram type matters less. Most species of both types fall near or
+  <b>Streptomycin is more balanced.</b> Most species of both types fall near or
   below the threshold, though some Streptococci (MIC 10–14) still resist it.
 </div>""", unsafe_allow_html=True)
 else:
@@ -242,7 +235,6 @@ else:
 <div class="callout">
   <b>Neomycin is the broadest of the three.</b> The majority of bacteria on both sides of the
   Gram divide respond to low doses. The main exception is <i>S. viridans</i> (MIC = 40).
-  Its wide coverage makes it useful but also means it can disrupt beneficial bacteria too.
 </div>""", unsafe_allow_html=True)
 
 st.markdown("---")
@@ -254,7 +246,7 @@ st.subheader("Part 3 — The Bottom Line")
 st.markdown("""
 If you only knew a patient had a Gram-positive or Gram-negative infection, which antibiotic
 would you reach for? The chart below shows the **median MIC** for each antibiotic, split by Gram type.
-Lower = better.
+Lower is better.
 """)
 
 summary = df_long.groupby(["Gram_Staining","Antibiotic"])["MIC"].median().reset_index()
@@ -292,12 +284,10 @@ st.altair_chart(bars, use_container_width=False)
 
 st.markdown(f"""
 <div class="callout">
-  <b>For Gram-positive infections → choose Penicillin.</b> Its median MIC is far lower than
+  <b> Choose Penicillin for Gram-positive infections.</b> Its median MIC is lower than
   the other two antibiotics against Gram-positive bacteria.<br><br>
-  <b>For Gram-negative infections → choose Neomycin or Streptomycin.</b> Penicillin's median
-  MIC shoots up dramatically, while the other two remain low and stable.<br><br>
-  Gram staining is a fast, cheap, 150-year-old test — and it still drives one of the most
-  important treatment decisions in infectious disease medicine.
+  <b> Choose Neomycin or StreptomycinFor Gram-negative infections.</b> Penicillin's median
+  MIC goes up dramatically, while the other two stay low and stable.<br><br>
 </div>
 """, unsafe_allow_html=True)
 
@@ -308,23 +298,20 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════
 st.subheader("Key Takeaways")
 st.markdown(f"""
-- **Penicillin works almost exclusively on Gram-positive bacteria** — it targets the thick cell wall that Gram-negative bacteria simply don't have in the same way.
-- **Neomycin is the broadest antibiotic** of the three, effective across both Gram types.
-- **Streptomycin sits in the middle** — more balanced than Penicillin, but not as broad as Neomycin.
-- **No antibiotic is universal.** Every drug has outliers (e.g., *S. viridans* resists Neomycin strongly).
-- **Burtin's 1951 finding still guides medicine today:** knowing a bacterium's Gram type is step one in choosing the right treatment.
-""")
+- **Penicillin works almost exclusively on Gram-positive bacteria**
+- **Neomycin is the broadest antibiotic** 
+- **Streptomycin is more balanced than Penicillin, but not as broad as Neomycin**
+- **No antibiotic is universal.** 
+
 
 st.markdown("---")
 st.markdown("""
 <div class="callout" style="border-left-color: #9B72CF; font-size: 0.85rem;">
-  <b>📝 About this project</b><br>
+  <b>About this project</b><br>
   This data story was created in collaboration with <b>Claude (Anthropic)</b> as part of a data
   visualization assignment exploring Burtin's antibiotic dataset.<br><br>
   <b>Data source:</b> Burtin, W. (1951). Antibiotic effectiveness data, reproduced via
   <a href="https://cdn.jsdelivr.net/npm/vega-datasets@1/data/burtin.json" target="_blank">Vega Datasets</a>.<br>
-  <b>Tools:</b> Python · Streamlit · Altair · Pandas · NumPy<br>
-  <b>AI assistance:</b> Visualization design, narrative structure, and code were developed
-  with the help of Claude (claude.ai).
+  <b>Tools:</b> Python · Streamlit · Altair · Pandas · NumPy<br>\
 </div>
 """, unsafe_allow_html=True)
