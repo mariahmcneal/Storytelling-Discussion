@@ -302,7 +302,7 @@ st.markdown(f"""
 - **Neomycin is the broadest antibiotic** 
 - **Streptomycin is more balanced than Penicillin, but not as broad as Neomycin**
 - **No antibiotic is universal.** 
-
+""")
 
 st.markdown("---")
 st.markdown("""
