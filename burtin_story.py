@@ -84,7 +84,7 @@ st.markdown("""
 # ═══════════════════════════════════════════════════════════════
 # HEADER
 # ═══════════════════════════════════════════════════════════════
-st.title("🔬 The Antibiotic Divide")
+st.title(""One Test for Three Drugs"")
 st.markdown("""
 **Does a bacterium's cell-wall type predict which antibiotic will defeat it?**
 
